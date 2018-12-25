@@ -1,6 +1,7 @@
 import os
 import re
 from datetime import datetime
+
 import pandas as pd
 
 
@@ -12,11 +13,12 @@ def parse_datetime(some_str):
     :param some_str: (str) whatsapplog line to parse
     :return: datetime or None (if no formatting succeeeded)
     """
-    formats = [(r'\d{2}\.\d{2}\.\d{2}, \d{2}:\d{2}:\d{2}','%d.%m.%y, %H:%M:%S'),
-               (r'\d{1,2}/\d{1,2}/\d{1,2}, \d{2}:\d{2}', '%m/%d/%y, %H:%M'),
-               (r'\d{2}\.\d{2}\.\d{2}, \d{2}:\d{2}', '%d.%m.%y, %H:%M')]
+    formats = [
+        (r'\d{2}\.\d{2}\.\d{2}, \d{2}:\d{2}:\d{2}', '%d.%m.%y, %H:%M:%S'),
+        (r'\d{1,2}/\d{1,2}/\d{1,2}, \d{2}:\d{2}', '%m/%d/%y, %H:%M'),
+        (r'\d{2}\.\d{2}\.\d{2}, \d{2}:\d{2}', '%d.%m.%y, %H:%M')]
     date = None
-    for regex,date_format in formats:
+    for regex, date_format in formats:
         date_match = re.search(regex, some_str)
         if date_match:
             date = datetime.strptime(date_match.group(), date_format)
@@ -208,9 +210,10 @@ def parse_file_to_leet(file_content):
 def split_time(dt):
     return dict(year=dt.year,
                 month=dt.month,
-                day = dt.day,
+                day=dt.day,
                 hour=dt.hour,
                 minute=dt.minute)
+
 
 if __name__ == '__main__':
     base_path = os.path.dirname(__file__)
@@ -219,4 +222,4 @@ if __name__ == '__main__':
     with open(test_path) as f:
         data = parse_file_to_leet(f.read())
 
-    pd.DataFrame(data).to_csv('foo.csv',index=False)
+    pd.DataFrame(data).to_csv('foo.csv', index=False)

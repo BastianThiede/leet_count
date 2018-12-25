@@ -2,8 +2,9 @@ import logging
 import os
 from collections import Counter
 from pprint import pprint
-import pandas as pd
+
 import numpy as np
+import pandas as pd
 from extractor import parse_file_to_leet
 
 logger = logging.getLogger(__name__)
@@ -214,12 +215,12 @@ def get_winner_420(day, month, year, parsed_whatsapp_logs):
         mask_16 = mask & (file_df.hour == 16)
         mask_04 = mask & (file_df.hour == 4)
 
-        occs_420 = calc_occurences_420(file_df, mask_04,mask_16)
+        occs_420 = calc_occurences_420(file_df, mask_04, mask_16)
         scaffold_df[key] = occs_420
 
-    retval =list()
-    form_vals = np.round(scaffold_df.mean(axis=1).fillna(0),0).astype(int)
-    for key,val in form_vals.items():
+    retval = list()
+    form_vals = np.round(scaffold_df.mean(axis=1).fillna(0), 0).astype(int)
+    for key, val in form_vals.items():
         retval.extend([key] * val)
 
     return retval
@@ -252,6 +253,7 @@ def calc_occurences_420(file_df, mask_04, mask_16):
     scaff['16'] = occ_count_16
     occs_420 = scaff.sum(axis=1)
     return occs_420
+
 
 def get_date_mask(day, file_df, month, year):
     mask = ((file_df.day == day)
@@ -296,7 +298,7 @@ def count_leet_and_greet(data_folder, start='01-01-2018', end='12-31-2018'):
 
         winner_leet = winner_partial('is_leet')
         winner_zeet = winner_partial('is_zeet')
-        winner_420 = get_winner_420(day,month,year,parsed_files_dict)
+        winner_420 = get_winner_420(day, month, year, parsed_files_dict)
         counter_leet += Counter(winner_leet)
         counter_zeet += Counter(winner_zeet)
         counter_420 += Counter(winner_420)
@@ -331,6 +333,7 @@ def parse_log_files(data_folder):
 if __name__ == '__main__':
     base_path = os.path.dirname(__file__)
     data_folder = os.path.join(base_path, './data/')
-    leet_and_greet_count = count_leet_and_greet(data_folder,start='01-01-2018',
+    leet_and_greet_count = count_leet_and_greet(data_folder,
+                                                start='01-01-2018',
                                                 end='12-31-2018')
     pprint(leet_and_greet_count)
