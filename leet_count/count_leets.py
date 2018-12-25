@@ -212,7 +212,8 @@ def count_leet_and_greet(data_folder, start='01-01-2018', end='12-31-2018'):
 def parse_log_files(data_folder):
     parsed_files = dict()
     logger.info('Reading from: {}'.format(data_folder))
-    for whatsapp_log in os.listdir(data_folder):
+    data_files = [x for x in os.listdir(data_folder) if x.endswith('.txt')]
+    for whatsapp_log in data_files:
         logger.info('Parsing file: {}'.format(whatsapp_log))
         with open(os.path.join(data_folder, whatsapp_log)) as f:
             data = parse_file_to_leet(f.read())
@@ -222,7 +223,7 @@ def parse_log_files(data_folder):
 
 if __name__ == '__main__':
     base_path = os.path.dirname(__file__)
-    data_folder = os.path.join(base_path, './data')
+    data_folder = os.path.join(base_path, './data/')
     leet_and_greet_count = count_leet_and_greet(data_folder,start='01-01-2018',
                                                 end='12-31-2018')
     pprint(leet_and_greet_count)
