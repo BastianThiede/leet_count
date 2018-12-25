@@ -222,7 +222,7 @@ def parse_log_files(data_folder):
 
 if __name__ == '__main__':
     base_path = os.path.dirname(__file__)
-    data_folder = os.path.join(base_path, '../test/test_data')
+    data_folder = os.path.join(base_path, './data')
     leet_and_greet_count = count_leet_and_greet(data_folder,start='01-01-2018',
                                                 end='12-31-2018')
     pprint(leet_and_greet_count)
