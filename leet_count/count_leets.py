@@ -1,3 +1,4 @@
+import csv
 import logging
 import os
 from collections import Counter
@@ -141,6 +142,9 @@ def find_root_mapping_file(parsed_whatsapp_logs):
     utv_ratio = 0
     base_file = None
     for key in parsed_whatsapp_logs:
+        if parsed_whatsapp_logs[key].empty:
+            continue
+
         unique_owners = parsed_whatsapp_logs[key]['message_owner'].unique()
         valid_names = [x for x in unique_owners
                        if not any(c.isdigit() for c in x)]
@@ -262,7 +266,7 @@ def get_date_mask(day, file_df, month, year):
     return mask
 
 
-def count_leet_and_greet(data_folder, start='01-01-2018', end='12-31-2018'):
+def count_leet_and_greet(data_folder, start='01-01-2019', end='12-31-2019'):
     """
     Aggregating function to  count leets and greets over the course of a
     given time range. Iterates on timerange calculates winner for each
@@ -280,10 +284,22 @@ def count_leet_and_greet(data_folder, start='01-01-2018', end='12-31-2018'):
     """
     parsed_files_dict = parse_log_files(data_folder)
     logger.info('Mapping message owners between files')
-    map_names(parsed_files_dict)
+    mapping = map_names(parsed_files_dict)
+    key = (set(mapping.keys()) ^ set(parsed_files_dict.keys())).pop()
+    people = parsed_files_dict[key].message_owner.unique().tolist()
     counter_zeet = Counter()
     counter_leet = Counter()
     counter_420 = Counter()
+    data_file_420 = open('/tmp/420.csv', 'w')
+    data_file_leet = open('/tmp/leet.csv', 'w')
+    data_file_zeet = open('/tmp/zeet.csv', 'w')
+    w1 = csv.DictWriter(data_file_420, people)
+    w2 = csv.DictWriter(data_file_leet, people)
+    w3 = csv.DictWriter(data_file_zeet, people)
+    w1.writeheader()
+    w2.writeheader()
+    w3.writeheader()
+    logger.info('Users found: %s', ",".join(mapping))
 
     for date in pd.date_range(start, end):
         logger.info('Calculating winners for: {}'.format(date))
@@ -302,9 +318,12 @@ def count_leet_and_greet(data_folder, start='01-01-2018', end='12-31-2018'):
         counter_leet += Counter(winner_leet)
         counter_zeet += Counter(winner_zeet)
         counter_420 += Counter(winner_420)
+        w1.writerow(counter_420)
+        w2.writerow(counter_leet)
+        w3.writerow(counter_zeet)
 
-        logger.info(winner_zeet)
-        logger.info(counter_zeet)
+        logger.info(winner_leet)
+        logger.info(counter_leet)
     return dict(zeet=counter_zeet, leet=counter_leet, fourtwenty=counter_420)
 
 
@@ -322,18 +341,23 @@ def parse_log_files(data_folder):
     parsed_files = dict()
     logger.info('Reading from: {}'.format(data_folder))
     data_files = [x for x in os.listdir(data_folder) if x.endswith('.txt')]
+    logger.info(f'Found {len(data_files)} data files!')
     for whatsapp_log in data_files:
         logger.info('Parsing file: {}'.format(whatsapp_log))
         with open(os.path.join(data_folder, whatsapp_log)) as f:
             data = parse_file_to_leet(f.read())
+            df = pd.DataFrame(data)
+            if df.empty:
+                logger.warning('FAILED LOG: {}'.format(whatsapp_log))
+                continue
             parsed_files[whatsapp_log] = pd.DataFrame(data)
     return parsed_files
 
 
 if __name__ == '__main__':
     base_path = os.path.dirname(__file__)
-    data_folder = os.path.join(base_path, './data/')
+    data_folder = os.path.join(base_path, '../test/test_data')
     leet_and_greet_count = count_leet_and_greet(data_folder,
-                                                start='01-01-2018',
-                                                end='12-31-2018')
+                                                start='01-01-2019',
+                                                end='12-31-2019')
     pprint(leet_and_greet_count)
