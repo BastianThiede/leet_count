@@ -1,7 +1,7 @@
 .idea/
 .ipynb_checkpoints/
 *.ipynb
-*.csv
+leet_count/data/*.csv
 venv/
 *.pyc
 *.txt
