@@ -5,3 +5,4 @@
 venv/
 *.pyc
 leet_count/data/*.txt
+leet_count.egg-info/
