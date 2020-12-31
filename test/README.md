@@ -4,9 +4,9 @@ To validate that everything is processed correctly, I created some
 dummy logs to test some of the edge cases.
 
 In total there are:
-3 correct fourtwenty messages from Peter Cnus
-15 correct leet messages from Peter Anus
-and 5 correct zeet messages from Beter Bnus
+- 3 correct fourtwenty messages from Peter Cnus
+- 15 correct leet messages from Peter Anus
+- 5 correct zeet messages from Beter Bnus
 
 The files are designed to test 3 aspects:
 1. Correctness (obiously)
